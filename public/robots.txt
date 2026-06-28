@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abikarthick-412.github.io/nebula-shift-dev/sitemap.xml

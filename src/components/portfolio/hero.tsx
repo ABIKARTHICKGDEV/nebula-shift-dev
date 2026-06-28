@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { portfolio } from "@/data/portfolio";
 import type { ViewerRole } from "@/data/portfolio";
+import { asset } from "@/lib/asset";
 
 const ICONS: Record<string, typeof Gamepad2> = {
   Gamepad2,
@@ -24,7 +25,9 @@ const ICONS: Record<string, typeof Gamepad2> = {
 };
 
 export function Hero({ role }: { role: ViewerRole }) {
-  const resume = portfolio.resumes[role.resumeKey];
+  const resume = asset(portfolio.resumes[role.resumeKey]);
+
+
 
   return (
     <section className="relative mx-auto mt-8 max-w-6xl px-4 pb-10 pt-6">

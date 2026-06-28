@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Download, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { portfolio } from "@/data/portfolio";
 import type { ViewerRole } from "@/data/portfolio";
+import { asset } from "@/lib/asset";
 
 const NAV = [
   { label: "Projects", href: "#projects" },
@@ -16,7 +17,7 @@ const NAV = [
 
 export function Nav({ role }: { role: ViewerRole }) {
   const [open, setOpen] = useState(false);
-  const resume = portfolio.resumes[role.resumeKey];
+  const resume = asset(portfolio.resumes[role.resumeKey]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Play, ExternalLink, ArrowRight, Filter } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { portfolio, type Project, type ViewerRole } from "@/data/portfolio";
 
 export function Projects({ role }: { role: ViewerRole }) {
@@ -149,8 +149,7 @@ function ProjectCard({ project }: { project: Project }) {
             </a>
           ) : null}
           <Link
-            to="/projects/$id"
-            params={{ id: project.id }}
+            to={`/projects/${project.id}`}
             className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-white/10"
           >
             Details <ArrowRight className="h-3.5 w-3.5" />
