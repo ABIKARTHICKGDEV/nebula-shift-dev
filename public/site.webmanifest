@@ -1,0 +1,18 @@
+{
+  "name": "Abikarthick G — Game Developer Portfolio",
+  "short_name": "Abikarthick G",
+  "description": "Unity game developer, gameplay programmer, and game designer portfolio.",
+  "start_url": "/nebula-shift-dev/",
+  "scope": "/nebula-shift-dev/",
+  "display": "standalone",
+  "background_color": "#0b0b13",
+  "theme_color": "#0b0b13",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

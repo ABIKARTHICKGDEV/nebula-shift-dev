@@ -1,153 +1,165 @@
-# Abikarthick G — Recruiter-Optimized Game Dev Portfolio (Revised v4)
 
-Recruiter-first AAA dark sci-fi portfolio. Everything that matters is **above the fold**. Single typed config drives all roles, projects, resumes, and skills.
+# Plan v3: Static SPA Refactor for GitHub Pages
 
-## Section order
+Convert TanStack Start (SSR + Cloudflare Worker) → pure client-side React + Vite SPA, deployable to GitHub Pages at `/nebula-shift-dev/`. **Zero visual changes.**
 
-1. Loading Screen — "Initializing Game World…"
-2. Sticky Nav — anchors + role-aware **Download Resume**
-3. **Role Switcher Bar** — Unity Recruiter · Unreal Recruiter · Gameplay Programmer · Software Engineer Recruiter
-4. **Hero (all-in-one above the fold)** — see layout below
-5. **Featured Project Spotlight** — single highlighted project directly under hero
-6. About
-7. Currently Building — 🚧 StarStuff with progress bar
-8. **Featured Games** — filter bar + metric-rich cards
-9. Game Showcase — itch.io embeds, GIFs/videos, screenshots
-10. Skills — chip-only, icon per group
-11. Learning Journey
-12. Game Development Process
-13. GitHub Activity (live from `ABIKARTHICK-412`)
-14. Career Interests
-15. Contact — form + all resume variants
-16. Footer
+> Note: I can't create a git branch from inside Lovable. Recommended: duplicate this project in Lovable (or create the `github-pages-static` branch on GitHub after sync) before I apply this refactor.
 
-## New: Hero block (Quick View merged in)
+---
 
-```text
-┌───────────────────────────────────────────────┐
-│  Crafting Interactive Worlds Through Code     │
-│  Unity Developer • Gameplay Programmer        │  ← role-aware subhead
-│  [Play My Games] [Download Resume] [Contact]  │
-│  ───────────────────────────────────────────  │
-│  🎮 3+ Games  🏆 Game Jam  ⚡ Unity & C#       │
-│  🚧 Building StarStuff                        │  ← highlights strip
-│  ───────────────────────────────────────────  │
-│  Experience 1.5+ yrs · Projects 3+ ·          │
-│  Primary Engine Unity · Languages C#/C++/Java │
-│  Location Tamil Nadu · Open to Internship     │  ← quick view inline
-└───────────────────────────────────────────────┘
+## 1. Stack swap
+
+**Remove:** `@tanstack/react-start`, `@tanstack/start-*`, nitro, `@lovable.dev/vite-tanstack-config`, `wrangler*`, Cloudflare adapter, `src/server.ts`, `src/start.ts`, `src/lib/error-capture.ts`, `src/lib/error-page.ts`, `src/lib/config.server.ts`, `src/lib/api/example.functions.ts`, `src/lib/github.functions.ts`, `src/routes/` dir, `src/routeTree.gen.ts`.
+
+**Add:** `vite`, `@vitejs/plugin-react`, `react-router-dom`, `@emailjs/browser`, `react-helmet-async`, `@tailwindcss/vite` (keep).
+
+**Keep:** React 19, Tailwind v4 + `src/styles.css`, framer-motion (`motion`), three / r3f / drei (if installed), `@tanstack/react-query`, lucide-react, all shadcn `ui/`, all `components/portfolio/*`, `src/data/portfolio.ts`, `src/hooks/use-viewer-role.ts`.
+
+## 2. Configurable base path
+
+`src/config/site.ts` — single source of truth for repo/base config:
+```ts
+const RAW_BASE = import.meta.env.VITE_BASE_PATH ?? "/nebula-shift-dev/";
+export const siteConfig = {
+  basePath: RAW_BASE.endsWith("/") ? RAW_BASE : `${RAW_BASE}/`,
+  siteUrl:  import.meta.env.VITE_SITE_URL  ?? "https://abikarthick-412.github.io/nebula-shift-dev",
+};
+```
+Same value consumed in `vite.config.ts` via `process.env.VITE_BASE_PATH` with fallback `/nebula-shift-dev/`, in `BrowserRouter basename`, in the sitemap generator, in `site.webmanifest` generator, and in the `asset()` helper. `.env.example` documents `VITE_BASE_PATH` + `VITE_SITE_URL`.
+
+## 3. Entry points & routing (BrowserRouter)
+
+```
+index.html                    # Vite root + SPA-redirect decode script
+src/main.tsx                  # ReactDOM + QueryClientProvider + HelmetProvider + BrowserRouter basename={siteConfig.basePath}
+src/App.tsx                   # <Routes>
+src/pages/Home.tsx            # ex-routes/index.tsx body
+src/pages/ProjectDetail.tsx   # ex-routes/projects.$id.tsx body
+src/pages/NotFound.tsx
 ```
 
-One Hero component renders all three bands so nothing important requires scrolling. Subtle 3D/particles background only behind the headline band; reduced-motion turns it off.
+**GH Pages SPA fallback (spa-github-pages technique):**
+- `public/404.html` rewrites the path to `?/...` and redirects to base.
+- Inline decode script in `index.html <head>` restores the path via `history.replaceState` before React boots.
+- `public/.nojekyll` disables Jekyll.
 
-## New: Featured Project Spotlight (under hero)
+## 4. Vite config
 
-A dedicated band that pulls one project flagged `featured: true` from config:
+```ts
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "node:path";
 
-```text
-CURRENT FEATURED PROJECT
-Charge Collector — 3D Endless Runner
-Created for SCORE SPACE JAM #33
-[Play Now (itch.io)]  [View Project]
+const base = process.env.VITE_BASE_PATH ?? "/nebula-shift-dev/";
+
+export default defineConfig({
+  base,
+  plugins: [react(), tailwindcss()],
+  resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+  build: { outDir: "dist", sourcemap: false, target: "es2020" },
+});
 ```
 
-Config field: `featuredProjectId: "charge-collector"`. Role switcher can override per viewer via `featuredProjectId` inside `viewerRoles[].overrides`. Recruiters get an instant try-it CTA before scrolling.
+`tsconfig.json` slimmed for client-only.
 
-## New: `projectImpact` on every project
+## 5. EmailJS — env-driven
 
-```text
-projectImpact: {
-  problem:  "Create an endless runner with increasing difficulty.",
-  solution: "Implemented procedural obstacle spawning and score-based progression."
+```ts
+// src/config/email.ts
+export const emailConfig = {
+  serviceId:  import.meta.env.VITE_EMAIL_SERVICE_ID  ?? "",
+  templateId: import.meta.env.VITE_EMAIL_TEMPLATE_ID ?? "",
+  publicKey:  import.meta.env.VITE_EMAIL_PUBLIC_KEY  ?? "",
+};
+export const isEmailConfigured = () =>
+  !!(emailConfig.serviceId && emailConfig.templateId && emailConfig.publicKey);
+```
+
+`src/components/portfolio/contact-form.tsx`:
+- Fields: name, email, subject, message. Zod validation (required, email format; name ≤80, subject ≤120, message ≤2000).
+- Submit disabled while sending; spinner; sonner toast for success/error; reset on success.
+- If `!isEmailConfigured()`: DEV-only `console.warn` + inline muted notice; PROD silently falls back to `mailto:`.
+
+## 6. GitHub API — client side w/ TanStack Query (kept)
+
+`src/lib/github.ts` → public `fetch('https://api.github.com/users/${u}')`. Consumed via `useQuery({ queryKey: ['gh', username], staleTime: 10*60_000, gcTime: 60*60_000 })`. Username from `portfolio.github.username`. `QueryClientProvider` in `src/main.tsx`.
+
+## 7. Asset helper (base-aware)
+
+```ts
+// src/lib/asset.ts
+import { siteConfig } from "@/config/site";
+export const asset = (p: string) => `${siteConfig.basePath}${p.replace(/^\//, "")}`;
+```
+Components wrap `/avatar.jpg`, `/resume-*.pdf`, project images, videos with `asset()`. `portfolio.ts` keeps raw paths (data layer unchanged).
+
+## 8. Static files in `public/`
+
+```
+public/
+  .nojekyll
+  404.html              # SPA redirect shim (base-path placeholder swapped at build)
+  robots.txt            # Allow: /; Sitemap: <siteUrl>/sitemap.xml
+  sitemap.xml           # generated at build from siteConfig + portfolio project IDs
+  favicon.ico
+  site.webmanifest      # name, short_name, theme/background tokens, start_url = basePath
+  avatar.jpg
+  resume-unity.pdf  resume-unreal.pdf  resume-gameplay.pdf  resume-software.pdf
+  projects/   videos/
+```
+
+`scripts/generate-static.mjs` (run via `prebuild`):
+- Reads `VITE_BASE_PATH` + `VITE_SITE_URL` from env (same defaults as `site.ts`).
+- Writes `public/sitemap.xml` (`/`, `/projects/<id>` for each project in `src/data/portfolio.ts`).
+- Writes `public/404.html` with the correct `pathSegmentsToKeep`/base.
+- Writes `public/site.webmanifest` with `start_url`/`scope` = basePath.
+- `public/robots.txt` is static but includes `Sitemap: <siteUrl>/sitemap.xml`.
+
+## 9. SEO / head
+
+`react-helmet-async` in `Home` and `ProjectDetail` for title, meta description, OG, JSON-LD `Person` (ported from current `__root.tsx` + `routes/index.tsx`). Per-project page sets its own title from `portfolio.ts`.
+
+## 10. GitHub Actions deployment (only mechanism)
+
+`.github/workflows/deploy.yml` — on push to `main`:
+- `actions/checkout@v4`, `actions/setup-node@v4` (Node 20, npm cache), `npm ci`, `npm run build`.
+- Build env vars from repo Secrets/Variables: `VITE_EMAIL_SERVICE_ID`, `VITE_EMAIL_TEMPLATE_ID`, `VITE_EMAIL_PUBLIC_KEY`, `VITE_BASE_PATH`, `VITE_SITE_URL`.
+- `actions/configure-pages@v5`, `actions/upload-pages-artifact@v3` (path: `./dist`), `actions/deploy-pages@v4`.
+- Permissions: `pages: write`, `id-token: write`. Concurrency group `pages`.
+- Repo Settings → Pages → Source: **GitHub Actions**.
+
+**No `gh-pages` npm dep, no `deploy` script.** `package.json` scripts:
+```json
+"scripts": {
+  "dev": "vite",
+  "build": "node scripts/generate-static.mjs && tsc -b && vite build",
+  "preview": "vite preview"
 }
 ```
 
-Rendered:
-- On the **project card** as a compact "Problem → Solution" two-line block (collapsible on mobile).
-- On the **project detail page** as a prominent first section above Technical Challenges.
+## 11. Performance
 
-Recruiters scanning cards see problem-solving framing immediately.
+- `React.lazy` + `<Suspense>` for `ProjectDetail`, `Showcase` (itch iframes already lazy), Three.js hero.
+- Existing `prefers-reduced-motion` gating preserved.
+- `loading="lazy"` on images preserved.
 
-## Featured Games — filter + rich metrics (unchanged from v3)
+## 12. README.md
 
-Filter bar: `All · Unity · Unreal · 2D · 3D · Game Jam · In Development` (Framer Motion `layout` reorder).
+Sections:
+1. **Project Architecture** — folder tree (`src/pages`, `src/components/portfolio`, `src/data`, `src/lib`, `src/config`, `scripts/`, `public/`, `.github/workflows/`) + what each owns + customization points table.
+2. **Local Development** — `npm i`, `npm run dev`.
+3. **Production Build** — `npm run build`, output `dist/`.
+4. **GitHub Pages Deployment** — Actions workflow is the only mechanism. Steps: push to `main` → Settings → Pages → Source = GitHub Actions → set repo Secrets (`VITE_EMAIL_*`) and optional Variables (`VITE_BASE_PATH`, `VITE_SITE_URL` if forking under a different repo name) → workflow builds + deploys automatically.
+5. **EmailJS Setup** — account → service → template (vars `{{name}} {{email}} {{subject}} {{message}}`) → public key → add repo Secrets + local `.env.local`.
+6. **Portfolio Customization** — table mapping every editable thing to its location in `src/data/portfolio.ts`, `src/config/site.ts`, or `public/`.
+7. **Changing the Base Path / Forking** — override `VITE_BASE_PATH` and `VITE_SITE_URL` (env or repo Variables); no source edits needed.
+8. **Troubleshooting** — blank page → `VITE_BASE_PATH` mismatch with repo name; 404 on refresh → confirm `404.html` + `.nojekyll` shipped.
 
-Each card:
-- Title, category, description
-- **projectImpact** (Problem / Solution)
-- **Metrics**: Type · Platform · Engine · Language · Team Size · Dev Time · Status
-- Tech tags + feature chips
-- Buttons: Play (itch.io) · GitHub · View Details
+---
 
-Project detail page (`/projects/$id`) adds: Gallery (gameplay/dev/editor/flow), **projectImpact** (top), Technical Challenges, Key Learnings, embedded itch.io iframe.
-
-## Role Switcher (4 viewers)
-
-Persists in `localStorage`. Each viewer in config controls:
-- `headline`, `subheadline`
-- `skillsPriority[]`, `projectOrder[]`
-- `resumeKey` → Unity / Unreal / Gameplay / Software PDF
-- `featuredProjectId` (optional override for the Hero Spotlight)
-- `ctaEmphasis`
-
-## Resume Variants
-
-`resumes: { unity, unreal, gameplay, software }` — each viewer maps to a `resumeKey`. Nav/Hero Download buttons swap automatically. Contact section lists all four explicitly.
-
-## Skills (future-proof, no levels)
-
-```text
-skillGroups: [
-  { id, title, icon, items: [{ name }] }
-]
-```
-
-Groups: Programming, Game Development, Tools, Problem Solving. Lucide icon per group. No bars/percentages anywhere.
-
-## Single config — `src/data/portfolio.ts`
-
-```text
-PortfolioConfig {
-  profile, resumes, viewerRoles, hero,
-  highlights[], quickView, stats[],
-  featuredProjectId,                       // hero spotlight target
-  currentlyBuilding,
-  projectFilters[],
-  projects [{
-    id, title, category, description,
-    featured: boolean,
-    tags[], tech[], features[],
-    projectImpact { problem, solution },   // NEW, required
-    metrics { type, platform, engine, language, teamSize, devTime, status },
-    challenges [{ challenge, solution }],
-    learnings [string],
-    gallery { gameplay[], development[], editor[], flowDiagram? },
-    links { itch?, itchEmbedUrl?, github?, details? }
-  }],
-  showcase, skillGroups, learningJourney,
-  process, timeline, careerInterests,
-  github { username: "ABIKARTHICK-412" }
-}
-```
-
-Adding a viewer, resume, project, or skill = single array push. No component changes.
-
-## Tech stack
-
-TanStack Start · React 19 · TypeScript · Tailwind v4 tokens in `src/styles.css` · Framer Motion · GSAP · @react-three/fiber + drei (hero only, viewport- and reduced-motion-gated) · @tsparticles/react · lucide-react · itch.io `<iframe>` embeds · TanStack Query + server fn `src/lib/github.functions.ts` for live GitHub stats.
-
-Routes: `/`, `/projects`, `/projects/$id`, `/about`, `/contact` — each with unique `head()` and canonical; Person JSON-LD in `__root.tsx`.
-
-Mobile-first; lazy-load heavy bits (Three canvas, particles, itch.io iframes, GitHub block) via Suspense skeletons.
-
-## Placeholders (swap later with one config edit each)
-
-- `/public/resume-{unity,unreal,gameplay,software}.pdf`
-- `/public/avatar.jpg`
-- Project gallery images, itch embed URLs, showcase GIFs/videos
-- Quick View values pre-filled with what you provided (Tamil Nadu, India · Open to Internship & Entry-Level)
-
-## Out of scope (default)
-
-- Real backend / DB / auth
-- Real email delivery (uses `mailto:`; add Lovable Cloud + Resend if you want real sending)
+## Out of scope
+- No visual redesign. All Tailwind, `styles.css`, glass, scanlines, neon, hero 3D unchanged.
+- No edits to `src/data/portfolio.ts` content.
+- No new features beyond the contact form swap.

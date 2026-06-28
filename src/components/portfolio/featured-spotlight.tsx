@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
 import { Sparkles, Play, ArrowRight, ExternalLink } from "lucide-react";
 import { portfolio } from "@/data/portfolio";
 import type { ViewerRole } from "@/data/portfolio";
@@ -48,12 +49,12 @@ export function FeaturedSpotlight({ role }: { role: ViewerRole }) {
                   <Play className="h-4 w-4" /> Play Now
                 </a>
               ) : null}
-              <a
-                href={`/projects/${project.id}`}
+              <Link
+                to={`/projects/${project.id}`}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-foreground hover:bg-white/10"
               >
                 View Project <ArrowRight className="h-4 w-4" />
-              </a>
+              </Link>
               {project.links.github ? (
                 <a
                   href={project.links.github}

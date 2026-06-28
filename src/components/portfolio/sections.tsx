@@ -1,12 +1,19 @@
+import * as React from "react";
 import * as Icons from "lucide-react";
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
 import { portfolio } from "@/data/portfolio";
 import type { ViewerRole } from "@/data/portfolio";
 import { SectionHead } from "./projects";
-import { getGithubStats } from "@/lib/github.functions";
+import { getGithubStats } from "@/lib/github";
+import { emailConfig, isEmailConfigured } from "@/config/email";
+import { asset } from "@/lib/asset";
 
 type LucideIcon = React.ComponentType<{ className?: string }>;
 const lucide = Icons as unknown as Record<string, LucideIcon>;
@@ -271,11 +278,11 @@ export function Process() {
 }
 
 export function GithubBlock() {
-  const fn = useServerFn(getGithubStats);
   const q = useQuery({
     queryKey: ["github", portfolio.github.username],
-    queryFn: () => fn({ data: { username: portfolio.github.username } }),
-    staleTime: 60 * 60 * 1000,
+    queryFn: () => getGithubStats(portfolio.github.username),
+    staleTime: 10 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
   return (
     <section id="github" className="mx-auto mt-24 max-w-6xl px-4">
@@ -366,42 +373,107 @@ export function CareerInterests() {
   );
 }
 
+// ─── Contact (EmailJS) ──────────────────────────────────────────────────────
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Required").max(80, "Too long"),
+  email: z.string().trim().email("Invalid email").max(160),
+  subject: z.string().trim().min(1, "Required").max(120, "Too long"),
+  message: z.string().trim().min(1, "Required").max(2000, "Too long"),
+});
+type ContactValues = z.infer<typeof contactSchema>;
+
 export function Contact() {
-  const [sent, setSent] = useState(false);
-  function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const name = String(data.get("name") ?? "");
-    const email = String(data.get("email") ?? "");
-    const msg = String(data.get("message") ?? "");
-    const subject = encodeURIComponent(`Portfolio Contact — ${name}`);
-    const body = encodeURIComponent(`${msg}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:${portfolio.profile.email}?subject=${subject}&body=${body}`;
-    setSent(true);
+  const [sending, setSending] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: { name: "", email: "", subject: "", message: "" },
+  });
+
+  async function onSubmit(values: ContactValues) {
+    setSending(true);
+    try {
+      if (isEmailConfigured()) {
+        await emailjs.send(
+          emailConfig.serviceId,
+          emailConfig.templateId,
+          {
+            name: values.name,
+            email: values.email,
+            subject: values.subject,
+            message: values.message,
+            to_email: portfolio.profile.email,
+          },
+          { publicKey: emailConfig.publicKey },
+        );
+        toast.success("Message sent — thanks for reaching out!");
+        reset();
+      } else {
+        // Fallback: open the user's mail client when EmailJS isn't configured.
+        const subject = encodeURIComponent(values.subject || `Portfolio Contact — ${values.name}`);
+        const body = encodeURIComponent(
+          `${values.message}\n\n— ${values.name} (${values.email})`,
+        );
+        window.location.href = `mailto:${portfolio.profile.email}?subject=${subject}&body=${body}`;
+        toast.message("Opening your mail client…");
+        reset();
+      }
+    } catch (err) {
+      console.error("[contact] send failed", err);
+      toast.error("Couldn't send right now. Please email me directly.");
+    } finally {
+      setSending(false);
+    }
   }
+
   return (
     <section id="contact" className="mx-auto mt-24 max-w-6xl px-4">
       <SectionHead eyebrow="Contact" title="Let's Build Something Playable" />
       <div className="mt-6 grid gap-5 lg:grid-cols-[1.1fr_1fr]">
-        <form onSubmit={submit} className="glass space-y-3 rounded-2xl p-5">
-          <Field label="Name" name="name" required />
-          <Field label="Email" name="email" type="email" required />
+        <form onSubmit={handleSubmit(onSubmit)} className="glass space-y-3 rounded-2xl p-5" noValidate>
+          {import.meta.env.DEV && !isEmailConfigured() ? (
+            <div className="rounded-lg border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-[11px] text-amber-200">
+              EmailJS not configured — form will fall back to <code>mailto:</code>. Set
+              <code className="mx-1">VITE_EMAIL_*</code>in <code>.env.local</code>.
+            </div>
+          ) : null}
+
+          <Field label="Name" error={errors.name?.message} {...register("name")} />
+          <Field label="Email" type="email" error={errors.email?.message} {...register("email")} />
+          <Field label="Subject" error={errors.subject?.message} {...register("subject")} />
           <div>
             <label className="text-[11px] uppercase tracking-widest text-muted-foreground">
               Message
             </label>
             <textarea
-              name="message"
-              required
               rows={5}
+              maxLength={2000}
+              {...register("message")}
               className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-primary"
             />
+            {errors.message ? (
+              <p className="mt-1 text-[11px] text-destructive">{errors.message.message}</p>
+            ) : null}
           </div>
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30"
+            disabled={sending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <Icons.Send className="h-4 w-4" /> {sent ? "Opening mail…" : "Send Message"}
+            {sending ? (
+              <>
+                <Icons.Loader2 className="h-4 w-4 animate-spin" /> Sending…
+              </>
+            ) : (
+              <>
+                <Icons.Send className="h-4 w-4" /> Send Message
+              </>
+            )}
           </button>
         </form>
 
@@ -411,13 +483,26 @@ export function Contact() {
               Direct
             </div>
             <div className="mt-3 space-y-2 text-sm">
-              <a className="flex items-center gap-2 hover:text-primary" href={`mailto:${portfolio.profile.email}`}>
+              <a
+                className="flex items-center gap-2 hover:text-primary"
+                href={`mailto:${portfolio.profile.email}`}
+              >
                 <Icons.Mail className="h-4 w-4" /> {portfolio.profile.email}
               </a>
-              <a className="flex items-center gap-2 hover:text-primary" href={portfolio.profile.linkedin} target="_blank" rel="noreferrer">
+              <a
+                className="flex items-center gap-2 hover:text-primary"
+                href={portfolio.profile.linkedin}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Icons.Linkedin className="h-4 w-4" /> LinkedIn
               </a>
-              <a className="flex items-center gap-2 hover:text-primary" href={portfolio.profile.github} target="_blank" rel="noreferrer">
+              <a
+                className="flex items-center gap-2 hover:text-primary"
+                href={portfolio.profile.github}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Icons.Github className="h-4 w-4" /> GitHub
               </a>
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -441,7 +526,7 @@ export function Contact() {
               ).map(([k, label]) => (
                 <a
                   key={k}
-                  href={portfolio.resumes[k]}
+                  href={asset(portfolio.resumes[k])}
                   download
                   className="inline-flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold hover:bg-white/10"
                 >
@@ -457,29 +542,27 @@ export function Contact() {
   );
 }
 
-function Field({
-  label,
-  name,
-  type = "text",
-  required,
-}: {
+interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-}) {
+  error?: string;
+}
+const Field = React.forwardRef<HTMLInputElement, FieldProps>(function Field(
+  { label, error, type = "text", ...rest },
+  ref,
+) {
   return (
     <div>
       <label className="text-[11px] uppercase tracking-widest text-muted-foreground">{label}</label>
       <input
-        name={name}
+        ref={ref}
         type={type}
-        required={required}
+        {...rest}
         className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-primary"
       />
+      {error ? <p className="mt-1 text-[11px] text-destructive">{error}</p> : null}
     </div>
   );
-}
+});
 
 export function Footer() {
   return (
@@ -489,7 +572,7 @@ export function Footer() {
           © {new Date().getFullYear()} {portfolio.profile.name}
         </div>
         <div className="text-xs text-muted-foreground">
-          Built with React + TanStack Start. Designed for recruiters.
+          Built with React + Vite. Deployed on GitHub Pages.
         </div>
       </div>
     </footer>
