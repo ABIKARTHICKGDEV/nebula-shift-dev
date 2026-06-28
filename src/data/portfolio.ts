@@ -118,7 +118,7 @@ export const portfolio: PortfolioConfig = {
   profile: {
     name: "Abikarthick G",
     tagline: "Unity Game Developer • Gameplay Programmer",
-    email: "abikarthick412@gmail.com",
+    email: "Abikarthick.gdev@gmail.com",
     linkedin: "https://linkedin.com/in/abikarthick-g",
     github: "https://github.com/ABIKARTHICK-412",
     photo: "/avatar.jpg",
