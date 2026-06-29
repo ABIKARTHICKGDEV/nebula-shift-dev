@@ -10,7 +10,7 @@ export function FeaturedSpotlight() {
   const isGameJam = project.tags.includes("game-jam");
 
   return (
-    <section id="featured" className="mx-auto mt-6 max-w-7xl px-4 sm:px-6">
+    <section id="featured" className="mx-auto mt-6 max-w-7xl scroll-mt-20 px-4 sm:px-6">
       <div className="mb-5">
         <div className="font-display text-[11px] font-semibold uppercase tracking-[0.25em] text-primary">
           Featured
@@ -19,6 +19,7 @@ export function FeaturedSpotlight() {
           Featured Project
         </h2>
       </div>
+
 
       <motion.article
         initial={{ opacity: 0, y: 16 }}
