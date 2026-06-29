@@ -52,8 +52,8 @@ export default function Home() {
       <main>
         <Hero />
         <FeaturedSpotlight />
-        <RecentlyDeveloped />
         <GameplayMechanics />
+
         <Projects />
         <Skills />
         <About />
