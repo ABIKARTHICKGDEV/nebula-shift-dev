@@ -11,7 +11,7 @@ export function Hero() {
     portfolio.projects[0]!;
 
   return (
-    <section id="top" className="relative isolate w-full overflow-hidden">
+    <section id="top" className="relative isolate w-full overflow-hidden scroll-mt-20">
       {/* Background */}
       <div
         className="section-bg"
