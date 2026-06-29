@@ -10,7 +10,6 @@ import {
   Contact,
   Footer,
   LoadingScreen,
-  RecentlyDeveloped,
 } from "@/components/portfolio/sections";
 import { portfolio } from "@/data/portfolio";
 import { siteConfig } from "@/config/site";
