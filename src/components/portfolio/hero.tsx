@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Play, Download, Github, ArrowRight, Gamepad2 } from "lucide-react";
 import { portfolio } from "@/data/portfolio";
 import { asset } from "@/lib/asset";
+import { RecentlyDeveloped } from "./sections";
 
 export function Hero() {
   const resume = asset(portfolio.resume);
