@@ -152,11 +152,22 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="cover-zoom relative aspect-[460/215] overflow-hidden border-b border-white/5">
         <div className="cover-img absolute inset-0 bg-gradient-to-br from-[#2A475E] via-[#1B2838] to-[#0E141B]" />
         <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="font-display text-2xl font-extrabold tracking-tight text-foreground/30">
-            {project.title}
+        {project.media?.banner ? (
+          <img
+            src={asset(project.media.banner)}
+            alt={project.title}
+            className="absolute inset-0 h-full w-full object-cover"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="font-display text-2xl font-extrabold tracking-tight text-foreground/30">
+              {project.title}
+            </div>
           </div>
-        </div>
+        )}
         <div className="absolute left-3 top-3 flex flex-wrap gap-1">
           {project.tags.slice(0, 3).map((t) => (
             <span
