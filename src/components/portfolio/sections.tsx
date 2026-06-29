@@ -371,10 +371,15 @@ export function GithubBlock() {
       id="activity"
       className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
     >
+      <div
+        className="section-bg"
+        style={{ ['--section-bg-image' as never]: `url(${asset('bg/activity.jpg')})` }}
+      />
       <SectionHead
         eyebrow="Development Activity"
         title={`@${portfolio.github.username}`}
       />
+
 
       <div className="mt-6 space-y-4">
         {q.isLoading ? (
