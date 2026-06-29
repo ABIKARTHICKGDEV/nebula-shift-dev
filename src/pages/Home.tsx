@@ -10,7 +10,6 @@ import {
   Contact,
   Footer,
   LoadingScreen,
-  RecentlyDeveloped,
 } from "@/components/portfolio/sections";
 import { portfolio } from "@/data/portfolio";
 import { siteConfig } from "@/config/site";
@@ -53,8 +52,8 @@ export default function Home() {
       <main>
         <Hero />
         <FeaturedSpotlight />
-        <RecentlyDeveloped />
         <GameplayMechanics />
+
         <Projects />
         <Skills />
         <About />
