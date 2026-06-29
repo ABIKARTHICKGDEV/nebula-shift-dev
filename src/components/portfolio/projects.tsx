@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Play, ExternalLink, ArrowRight, Filter, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { portfolio, type Project } from "@/data/portfolio";
+import { asset } from "@/lib/asset";
 
 export function Projects() {
   const [filter, setFilter] = useState("all");
@@ -28,7 +29,15 @@ export function Projects() {
   const isFiltered = filter !== "all";
 
   return (
-    <section id="library" className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
+    <section
+      id="library"
+      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-[0.07] blur-2xl"
+        style={{ backgroundImage: `url(${asset(portfolio.backgrounds.projects)})` }}
+      />
       <SectionHead
         eyebrow="Projects"
         title="Projects"

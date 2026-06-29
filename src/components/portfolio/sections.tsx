@@ -380,7 +380,15 @@ export function GithubBlock() {
   }, [q.data]);
 
   return (
-    <section id="activity" className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
+    <section
+      id="activity"
+      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-[0.07] blur-2xl"
+        style={{ backgroundImage: `url(${asset(portfolio.backgrounds.activity)})` }}
+      />
       <SectionHead
         eyebrow="Development Activity"
         title={`@${portfolio.github.username}`}
@@ -588,7 +596,15 @@ export function Contact() {
   }
 
   return (
-    <section id="support" className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
+    <section
+      id="support"
+      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-[0.07] blur-2xl"
+        style={{ backgroundImage: `url(${asset(portfolio.backgrounds.contact)})` }}
+      />
       <SectionHead
         eyebrow="Get In Touch"
         title="Let's Build Something Together"
