@@ -17,76 +17,63 @@ import { asset } from "@/lib/asset";
 type LucideIcon = React.ComponentType<{ className?: string }>;
 const lucide = Icons as unknown as Record<string, LucideIcon>;
 
-// ─── Recently Developed (horizontal scroll row) ──────────────────────────────
+// ─── Released Games (vertical Steam-library panel) ───────────────────────────
 
 export function RecentlyDeveloped() {
-  const ref = useRef<HTMLDivElement>(null);
-  const scroll = (dir: 1 | -1) => {
-    ref.current?.scrollBy({ left: dir * 360, behavior: "smooth" });
-  };
   const released = portfolio.projects.filter(
     (p) => p.metrics.status === "Completed",
   );
   return (
-    <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
-      <div className="mb-5 flex items-end justify-between">
-        <SectionHead eyebrow="Released Games" title="Released Games" />
-        <div className="hidden gap-1.5 sm:flex">
-          <button
-            aria-label="Scroll left"
-            onClick={() => scroll(-1)}
-            className="grid h-9 w-9 place-items-center rounded-sm border border-white/8 bg-[#1B2838] text-muted-foreground hover:text-primary"
-          >
-            <Icons.ChevronLeft className="h-4 w-4" />
-          </button>
-          <button
-            aria-label="Scroll right"
-            onClick={() => scroll(1)}
-            className="grid h-9 w-9 place-items-center rounded-sm border border-white/8 bg-[#1B2838] text-muted-foreground hover:text-primary"
-          >
-            <Icons.ChevronRight className="h-4 w-4" />
-          </button>
+    <div className="rounded-sm border border-white/8 bg-[#1B2838]/80 backdrop-blur-sm">
+      <div className="flex items-center justify-between border-b border-white/8 px-4 py-3">
+        <div className="font-display text-[11px] font-semibold uppercase tracking-[0.25em] text-primary">
+          Released Games
         </div>
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          {released.length} titles
+        </span>
       </div>
-
-      <div
-        ref={ref}
-        className="scroll-row -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6"
-      >
-        {released.map((p) => (
-          <a
-            key={p.id}
-            href="#library"
-            className="card-lift cover-zoom group relative h-[200px] w-[320px] shrink-0 snap-start overflow-hidden rounded-sm border border-white/8 bg-[#1B2838]"
-          >
-            <div className="cover-img absolute inset-0 bg-gradient-to-br from-[#2A475E] via-[#1B2838] to-[#0E141B]" />
-            <div className="absolute inset-0 grid-bg opacity-30" />
-            {p.media?.banner ? (
-              <img
-                src={asset(p.media.banner)}
-                alt={p.title}
-                className="absolute inset-0 h-full w-full object-cover"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                }}
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Icons.Gamepad2 className="h-10 w-10 text-foreground/20" />
-              </div>
-            )}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3">
-              <div className="font-display text-base font-bold leading-tight text-foreground">
-                {p.title}
-              </div>
-              <div className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-                {p.metrics.engine} · {p.category}
-              </div>
-            </div>
-          </a>
-        ))}
+      <div className="scroll-row max-h-[460px] overflow-y-auto px-2 py-2">
+        <ul className="flex flex-col gap-1.5">
+          {released.map((p) => (
+            <li key={p.id}>
+              <a
+                href="#library"
+                className="card-lift group flex items-center gap-3 rounded-sm border border-transparent bg-[#2A475E]/30 p-2 hover:border-primary/30 hover:bg-[#2A475E]/60"
+              >
+                <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-sm border border-white/8 bg-gradient-to-br from-[#2A475E] via-[#1B2838] to-[#0E141B]">
+                  <div className="absolute inset-0 grid-bg opacity-30" />
+                  {p.media?.banner ? (
+                    <img
+                      src={asset(p.media.banner)}
+                      alt={p.title}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display =
+                          "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 grid place-items-center">
+                      <Icons.Gamepad2 className="h-4 w-4 text-foreground/30" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-display text-sm font-semibold text-foreground">
+                    {p.title}
+                  </div>
+                  <div className="truncate text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {p.metrics.engine} · {p.category}
+                  </div>
+                </div>
+                <Icons.ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
-    </section>
+    </div>
   );
 }
 
