@@ -1,19 +1,18 @@
 import { motion } from "motion/react";
 import { Play, Download, Github, ArrowRight, Gamepad2 } from "lucide-react";
 import { portfolio } from "@/data/portfolio";
-import type { ViewerRole } from "@/data/portfolio";
 import { asset } from "@/lib/asset";
 
-export function Hero({ role }: { role: ViewerRole }) {
-  const resume = asset(portfolio.resumes[role.resumeKey]);
-  const featuredId = role.featuredProjectId ?? portfolio.featuredProjectId;
+export function Hero() {
+  const resume = asset(portfolio.resume);
   const featured =
-    portfolio.projects.find((p) => p.id === featuredId) ?? portfolio.projects[0]!;
+    portfolio.projects.find((p) => p.id === portfolio.featuredProjectId) ??
+    portfolio.projects[0]!;
   const library = portfolio.projects.slice(0, 4);
 
   return (
-    <section className="relative isolate w-full overflow-hidden">
-      {/* Background placeholder image — swap by setting hero.backgroundImage on the data layer */}
+    <section id="top" className="relative isolate w-full overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -41,35 +40,31 @@ export function Hero({ role }: { role: ViewerRole }) {
             </div>
 
             <h1 className="mt-4 font-display text-5xl font-extrabold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-              {portfolio.profile.name}
+              Gameplay Programmer
             </h1>
 
-            <p className="mt-3 font-display text-base font-semibold uppercase tracking-[0.18em] text-primary sm:text-lg">
-              Gameplay Programmer · Unity Developer · Unreal Engine Developer
+            <p className="mt-3 max-w-2xl font-display text-base font-semibold uppercase tracking-[0.14em] text-primary sm:text-lg">
+              Building polished gameplay systems and interactive experiences using Unity and Unreal Engine.
             </p>
 
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Building polished gameplay systems and interactive experiences.
+              {portfolio.hero.description}
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-2.5">
-              {featured.links.itch ? (
-                <a
-                  href={featured.links.itch}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-steam inline-flex items-center gap-2 rounded-sm px-5 py-2.5 text-sm font-semibold uppercase tracking-wider"
-                >
-                  <Play className="h-4 w-4" /> Play Featured Game
-                </a>
-              ) : (
-                <a
-                  href="#library"
-                  className="btn-steam inline-flex items-center gap-2 rounded-sm px-5 py-2.5 text-sm font-semibold uppercase tracking-wider"
-                >
-                  <Gamepad2 className="h-4 w-4" /> Browse Library
-                </a>
-              )}
+              <a
+                href={featured.links.itch ?? "#featured"}
+                target={featured.links.itch ? "_blank" : undefined}
+                rel={featured.links.itch ? "noreferrer" : undefined}
+                className="btn-steam inline-flex items-center gap-2 rounded-sm px-5 py-2.5 text-sm font-semibold uppercase tracking-wider"
+              >
+                {featured.links.itch ? (
+                  <Play className="h-4 w-4" />
+                ) : (
+                  <Gamepad2 className="h-4 w-4" />
+                )}
+                Featured Project
+              </a>
               <a
                 href="#library"
                 className="btn-ghost-steam inline-flex items-center gap-2 rounded-sm px-5 py-2.5 text-sm font-semibold uppercase tracking-wider"
@@ -81,7 +76,7 @@ export function Hero({ role }: { role: ViewerRole }) {
                 download
                 className="btn-ghost-steam inline-flex items-center gap-2 rounded-sm px-5 py-2.5 text-sm font-semibold uppercase tracking-wider"
               >
-                <Download className="h-4 w-4" /> Resume
+                <Download className="h-4 w-4" /> Download Resume
               </a>
               <a
                 href={portfolio.profile.github}

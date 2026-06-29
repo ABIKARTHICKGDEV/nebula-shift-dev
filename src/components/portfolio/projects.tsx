@@ -1,33 +1,38 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Play, ExternalLink, ArrowRight, Filter } from "lucide-react";
+import { Play, ExternalLink, ArrowRight, Filter, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
-import { portfolio, type Project, type ViewerRole } from "@/data/portfolio";
+import { portfolio, type Project } from "@/data/portfolio";
 
-export function Projects({ role }: { role: ViewerRole }) {
+export function Projects() {
   const [filter, setFilter] = useState("all");
 
-  const ordered = useMemo(() => {
-    const order = role.projectOrder;
-    return [...portfolio.projects].sort(
-      (a, b) =>
-        (order.indexOf(a.id) === -1 ? 99 : order.indexOf(a.id)) -
-        (order.indexOf(b.id) === -1 ? 99 : order.indexOf(b.id)),
-    );
-  }, [role]);
+  const all = portfolio.projects;
+  const featuredId = portfolio.featuredProjectId;
 
-  const visible = useMemo(
-    () =>
-      filter === "all" ? ordered : ordered.filter((p) => p.tags.includes(filter)),
-    [ordered, filter],
+  const filtered = useMemo(
+    () => (filter === "all" ? all : all.filter((p) => p.tags.includes(filter))),
+    [all, filter],
   );
+
+  const unityGrouped = useMemo(
+    () =>
+      all.filter((p) => p.tags.includes("unity") && p.id !== featuredId),
+    [all, featuredId],
+  );
+  const unrealGrouped = useMemo(
+    () => all.filter((p) => p.tags.includes("unreal") && p.id !== featuredId),
+    [all, featuredId],
+  );
+
+  const isFiltered = filter !== "all";
 
   return (
     <section id="library" className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
       <SectionHead
-        eyebrow="Continue Playing"
-        title="Your Library"
-        sub="Every title is playable, scoped, and shipped. Filter by stack or type."
+        eyebrow="Projects"
+        title="Projects"
+        sub="Every title is playable, scoped, and shipped. Filter by engine or status."
       />
 
       <div className="mt-5 flex flex-wrap items-center gap-2">
@@ -52,17 +57,75 @@ export function Projects({ role }: { role: ViewerRole }) {
         })}
       </div>
 
-      <motion.div
-        layout
-        className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-      >
-        <AnimatePresence mode="popLayout">
-          {visible.map((p) => (
-            <ProjectCard key={p.id} project={p} />
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      {isFiltered ? (
+        <motion.div
+          layout
+          className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.map((p) => (
+              <ProjectCard key={p.id} project={p} />
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      ) : (
+        <div className="mt-8 space-y-12">
+          <ProjectGroup title="Unity Projects" projects={unityGrouped} />
+          <ProjectGroup
+            title="Unreal Engine Projects"
+            projects={unrealGrouped}
+            emptyState={
+              <div className="rounded-sm border border-white/8 bg-[#1B2838] p-6">
+                <div className="flex items-start gap-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-primary/15 text-primary">
+                    <Rocket className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <div className="font-display text-base font-bold text-foreground">
+                      Currently building Unreal Engine gameplay projects.
+                    </div>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      Expanding into Unreal Engine 5 C++ while applying the same
+                      gameplay programming principles developed through Unity
+                      projects.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+          />
+        </div>
+      )}
     </section>
+  );
+}
+
+function ProjectGroup({
+  title,
+  projects,
+  emptyState,
+}: {
+  title: string;
+  projects: Project[];
+  emptyState?: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h3 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">
+        {title}
+      </h3>
+      <div className="mt-4">
+        {projects.length === 0 ? (
+          emptyState
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {projects.map((p) => (
+              <ProjectCard key={p.id} project={p} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -107,8 +170,10 @@ function ProjectCard({ project }: { project: Project }) {
 
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           <Chip>{project.metrics.engine}</Chip>
-          <Chip>{project.metrics.platform}</Chip>
           <Chip>{project.metrics.language}</Chip>
+          <Chip>{project.metrics.platform}</Chip>
+          <Chip>{project.metrics.status}</Chip>
+          <Chip>{project.category}</Chip>
         </div>
 
         <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">

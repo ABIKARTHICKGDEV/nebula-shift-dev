@@ -3,22 +3,21 @@ import { motion, AnimatePresence } from "motion/react";
 import { Download, Menu, X, Github } from "lucide-react";
 import { useState } from "react";
 import { portfolio } from "@/data/portfolio";
-import type { ViewerRole } from "@/data/portfolio";
 import { asset } from "@/lib/asset";
 import { ThemeSwitcher } from "@/components/portfolio/theme-switcher";
 
 const NAV = [
-  { label: "Featured", href: "#featured" },
-  { label: "Library", href: "#library" },
-  { label: "Toolkit", href: "#toolkit" },
+  { label: "Home", href: "#top" },
+  { label: "Projects", href: "#library" },
+  { label: "Skills", href: "#toolkit" },
   { label: "About", href: "#about" },
-  { label: "Activity", href: "#activity" },
-  { label: "Support", href: "#support" },
+  { label: "Development", href: "#activity" },
+  { label: "Contact", href: "#support" },
 ];
 
-export function Nav({ role }: { role: ViewerRole }) {
+export function Nav() {
   const [open, setOpen] = useState(false);
-  const resume = asset(portfolio.resumes[role.resumeKey]);
+  const resume = asset(portfolio.resume);
 
   return (
     <header className="bg-nav fixed inset-x-0 top-0 z-50 border-b border-[var(--hairline)] backdrop-blur">
@@ -61,13 +60,7 @@ export function Nav({ role }: { role: ViewerRole }) {
             className="btn-steam hidden items-center gap-2 rounded-sm px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider sm:inline-flex"
           >
             <Download className="h-3.5 w-3.5" />
-            {role.label.includes("Unity")
-              ? "Unity Resume"
-              : role.label.includes("Unreal")
-                ? "Unreal Resume"
-                : role.label.includes("Gameplay")
-                  ? "Gameplay Resume"
-                  : "Software Resume"}
+            Download Resume
           </a>
           <button
             className="grid h-9 w-9 place-items-center rounded-sm border border-white/8 bg-white/5 text-foreground md:hidden"

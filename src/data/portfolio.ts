@@ -1,21 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Single source of truth for the portfolio. Every section reads from here.
-// Add a viewer role, a project, a resume variant, or a skill = single push.
+// Single source of truth for the portfolio. One identity: Gameplay Programmer.
+// Add a project, resume variant, or a skill = single push.
 // ─────────────────────────────────────────────────────────────────────────────
-
-export type ResumeKey = "unity" | "unreal" | "gameplay" | "software";
-
-export interface ViewerRole {
-  id: string;
-  label: string;
-  headline: string;
-  subheadline: string;
-  resumeKey: ResumeKey;
-  skillsPriority: string[];
-  projectOrder: string[];
-  featuredProjectId?: string;
-  ctaEmphasis: "play" | "resume" | "contact";
-}
 
 export interface ProjectMetrics {
   type: string;
@@ -33,7 +19,7 @@ export interface Project {
   category: string;
   description: string;
   featured?: boolean;
-  tags: string[]; // drives filter bar: Unity, Unreal, 2D, 3D, Game Jam, In Development
+  tags: string[]; // drives filter bar: unity, unreal, 2d, 3d, game-jam, in-development
   tech: string[];
   features: string[];
   projectImpact: { problem: string; solution: string };
@@ -72,8 +58,15 @@ export interface PortfolioConfig {
     location: string;
     availability: string;
   };
-  resumes: Record<ResumeKey, string>;
-  viewerRoles: ViewerRole[];
+  /** The single resume surfaced everywhere in the UI. */
+  resume: string;
+  /** Internal-only resume variants kept for future use. NOT referenced by any component. */
+  resumeVariants: {
+    unity: string;
+    unreal: string;
+    gameplay: string;
+    software: string;
+  };
   hero: {
     defaultHeadline: string;
     defaultSubheadline: string;
@@ -109,7 +102,6 @@ export interface PortfolioConfig {
   learningJourney: { title: string; description: string; icon: string }[];
   process: { label: string; icon: string; description: string }[];
   timeline: { year: string; title: string; description: string }[];
-  careerInterests: { title: string; description: string; icon: string }[];
   github: { username: string };
   about: { bio: string; education: { degree: string; school: string; detail?: string }[] };
 }
@@ -117,7 +109,7 @@ export interface PortfolioConfig {
 export const portfolio: PortfolioConfig = {
   profile: {
     name: "Abikarthick G",
-    tagline: "Unity Game Developer • Gameplay Programmer",
+    tagline: "Gameplay Programmer · Unity · Unreal Engine",
     email: "Abikarthick.gdev@gmail.com",
     linkedin: "https://linkedin.com/in/abikarthick-g",
     github: "https://github.com/ABIKARTHICK-412",
@@ -125,68 +117,24 @@ export const portfolio: PortfolioConfig = {
     location: "Tamil Nadu, India",
     availability: "Open to Internship & Entry-Level Opportunities",
   },
-  resumes: {
+  resume: "/resume-gameplay.pdf",
+  resumeVariants: {
     unity: "/resume-unity.pdf",
     unreal: "/resume-unreal.pdf",
     gameplay: "/resume-gameplay.pdf",
     software: "/resume-software.pdf",
   },
-  viewerRoles: [
-    {
-      id: "unity",
-      label: "Unity Recruiter",
-      headline: "Crafting Interactive Worlds Through Code",
-      subheadline: "Unity Developer • C# • Gameplay Systems",
-      resumeKey: "unity",
-      skillsPriority: ["game-dev", "programming", "tools", "problem-solving"],
-      projectOrder: ["charge-collector", "flappy-bird", "pong", "starstuff"],
-      featuredProjectId: "charge-collector",
-      ctaEmphasis: "play",
-    },
-    {
-      id: "unreal",
-      label: "Unreal Recruiter",
-      headline: "Building Next-Gen Gameplay With Unreal",
-      subheadline: "Unreal Engine • C++ • Blueprints • Gameplay Programming",
-      resumeKey: "unreal",
-      skillsPriority: ["programming", "game-dev", "tools", "problem-solving"],
-      projectOrder: ["starstuff", "charge-collector", "flappy-bird", "pong"],
-      featuredProjectId: "starstuff",
-      ctaEmphasis: "resume",
-    },
-    {
-      id: "gameplay",
-      label: "Gameplay Programmer",
-      headline: "Designing Mechanics That Players Feel",
-      subheadline: "Gameplay Systems • Physics • State Machines • C#/C++",
-      resumeKey: "gameplay",
-      skillsPriority: ["game-dev", "problem-solving", "programming", "tools"],
-      projectOrder: ["charge-collector", "starstuff", "pong", "flappy-bird"],
-      featuredProjectId: "charge-collector",
-      ctaEmphasis: "play",
-    },
-    {
-      id: "software",
-      label: "Software Engineer Recruiter",
-      headline: "Engineer Who Ships — From Code to Game",
-      subheadline: "C# • C++ • Java • OOP • Git • Problem Solving",
-      resumeKey: "software",
-      skillsPriority: ["programming", "problem-solving", "tools", "game-dev"],
-      projectOrder: ["charge-collector", "starstuff", "flappy-bird", "pong"],
-      featuredProjectId: "charge-collector",
-      ctaEmphasis: "resume",
-    },
-  ],
   hero: {
-    defaultHeadline: "Crafting Interactive Worlds Through Code",
-    defaultSubheadline: "Unity Developer • Gameplay Programmer",
+    defaultHeadline: "Gameplay Programmer",
+    defaultSubheadline:
+      "Building polished gameplay systems and interactive experiences using Unity and Unreal Engine.",
     description:
-      "Passionate game developer specializing in Unity and C#. I focus on creating polished gameplay systems, learning fast, and shipping real, playable work.",
+      "Gameplay programming, physics, AI, game feel, systems design, and technical problem solving — building games that feel right from prototype to release.",
   },
   highlights: [
     { icon: "Gamepad2", label: "3+ Games Developed" },
     { icon: "Trophy", label: "Game Jam Participant" },
-    { icon: "Zap", label: "Unity & C# Developer" },
+    { icon: "Zap", label: "Unity & Unreal Engine" },
     { icon: "Construction", label: "Currently Building StarStuff" },
   ],
   quickView: {
@@ -216,11 +164,9 @@ export const portfolio: PortfolioConfig = {
   projectFilters: [
     { id: "all", label: "All" },
     { id: "unity", label: "Unity" },
-    { id: "unreal", label: "Unreal" },
-    { id: "2d", label: "2D" },
-    { id: "3d", label: "3D" },
-    { id: "game-jam", label: "Game Jam" },
+    { id: "unreal", label: "Unreal Engine" },
     { id: "in-development", label: "In Development" },
+    { id: "game-jam", label: "Game Jam" },
   ],
   projects: [
     {
@@ -386,21 +332,14 @@ export const portfolio: PortfolioConfig = {
   },
   skillGroups: [
     {
-      id: "game-dev",
-      title: "Game Development",
+      id: "game-engines",
+      title: "Game Engines",
       icon: "Gamepad2",
-      items: [
-        { name: "Unity" },
-        { name: "Gameplay Programming" },
-        { name: "Game Design" },
-        { name: "2D & 3D" },
-        { name: "Physics Systems" },
-        { name: "State Machines" },
-      ],
+      items: [{ name: "Unity" }, { name: "Unreal Engine" }],
     },
     {
-      id: "programming",
-      title: "Programming",
+      id: "programming-languages",
+      title: "Programming Languages",
       icon: "Code2",
       items: [
         { name: "C#" },
@@ -408,6 +347,19 @@ export const portfolio: PortfolioConfig = {
         { name: "Java" },
         { name: "OOP" },
         { name: "Data Structures" },
+      ],
+    },
+    {
+      id: "gameplay-programming",
+      title: "Gameplay Programming",
+      icon: "Cpu",
+      items: [
+        { name: "Gameplay Systems" },
+        { name: "Physics" },
+        { name: "State Machines" },
+        { name: "AI Behaviors" },
+        { name: "Game Feel" },
+        { name: "2D & 3D" },
       ],
     },
     {
@@ -453,7 +405,7 @@ export const portfolio: PortfolioConfig = {
     },
     {
       title: "Continuous Development",
-      description: "Building StarStuff while exploring Unreal & C++.",
+      description: "Building StarStuff while expanding into Unreal Engine 5 & C++.",
       icon: "Rocket",
     },
   ],
@@ -483,31 +435,9 @@ export const portfolio: PortfolioConfig = {
       description: "Original 2D physics puzzle platformer in active development.",
     },
   ],
-  careerInterests: [
-    {
-      title: "Unity Developer",
-      description: "Gameplay, tools, and systems work in Unity / C#.",
-      icon: "Gamepad2",
-    },
-    {
-      title: "Unreal Developer",
-      description: "Learning Unreal & C++ for the next role.",
-      icon: "Boxes",
-    },
-    {
-      title: "Gameplay Programmer",
-      description: "Mechanics, physics, state systems — making games feel right.",
-      icon: "Cpu",
-    },
-    {
-      title: "Technical Artist (Beginner)",
-      description: "Shaders, VFX, pipeline tools — bridging art & code.",
-      icon: "Wand2",
-    },
-  ],
   github: { username: "ABIKARTHICK-412" },
   about: {
-    bio: "I'm Abikarthick G, a game developer focused on Unity and C#. I love crafting gameplay that feels responsive and learning whatever it takes to ship — from physics tuning to engine internals.",
+    bio: "I'm Abikarthick G — a Gameplay Programmer building games in Unity and currently expanding into Unreal Engine 5 with C++. My focus is on gameplay architecture, physics, AI behaviors, optimization, and the small details that make systems feel responsive. Unity is where I learned to ship — from prototype to playable build — and Unreal is the next step in the same continuous path: applying the same engineering principles to a larger toolset.",
     education: [
       {
         degree: "Advanced Diploma in Game Design and Development",

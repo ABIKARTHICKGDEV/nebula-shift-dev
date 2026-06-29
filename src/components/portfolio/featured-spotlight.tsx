@@ -2,22 +2,21 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { Play, Github, ArrowRight, Trophy } from "lucide-react";
 import { portfolio } from "@/data/portfolio";
-import type { ViewerRole } from "@/data/portfolio";
 
-export function FeaturedSpotlight({ role }: { role: ViewerRole }) {
-  const id = role.featuredProjectId ?? portfolio.featuredProjectId;
+export function FeaturedSpotlight() {
   const project =
-    portfolio.projects.find((p) => p.id === id) ?? portfolio.projects[0]!;
+    portfolio.projects.find((p) => p.id === portfolio.featuredProjectId) ??
+    portfolio.projects[0]!;
   const isGameJam = project.tags.includes("game-jam");
 
   return (
     <section id="featured" className="mx-auto mt-6 max-w-7xl px-4 sm:px-6">
       <div className="mb-5">
         <div className="font-display text-[11px] font-semibold uppercase tracking-[0.25em] text-primary">
-          Featured Game
+          Featured
         </div>
         <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">
-          Now Playing
+          Featured Project
         </h2>
       </div>
 
