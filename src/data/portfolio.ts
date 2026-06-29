@@ -40,6 +40,40 @@ export interface Project {
   };
 }
 
+export interface ProjectMedia {
+  banner?: string;
+  screenshot?: string;
+  gif?: string;
+  video?: string;
+  engineIcon?: string;
+}
+
+export interface GameplayMechanic {
+  id: string;
+  title: string;
+  engine: "Unity" | "Unreal Engine";
+  description: string;
+  media: { preview?: string; gif?: string; video?: string };
+  links?: { github?: string; demo?: string };
+  // Optional, future-proof fields — rendered only when present:
+  difficulty?: string;
+  engineVersion?: string;
+  category?: string;
+  docsUrl?: string;
+  articleUrl?: string;
+  sourceUrl?: string;
+}
+
+export interface BackgroundImages {
+  hero: string;
+  projects: string;
+  mechanics: string;
+  skills: string;
+  about: string;
+  activity: string;
+  contact: string;
+}
+
 export interface SkillGroup {
   id: string;
   title: string;
