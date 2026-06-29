@@ -318,25 +318,33 @@
     transform: scale(1.05);
   }
 
-  /* Themed CTA */
+  /* Themed CTA — solid charcoal with green accent on hover */
   .btn-steam {
-    background: linear-gradient(180deg, var(--primary-gradient-from) 0%, var(--primary-gradient-to) 100%);
-    color: var(--primary-foreground);
+    background: var(--surface-2);
+    color: var(--foreground);
     border: 1px solid var(--hairline-strong);
-    transition: filter 150ms ease, transform 150ms ease;
+    transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
   }
-  .btn-steam:hover { filter: brightness(1.08); }
-  .btn-steam:active { transform: translateY(1px); }
+  .btn-steam:hover {
+    background: var(--card-hover);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+  .btn-steam:active { transform: translateY(0); }
 
   .btn-ghost-steam {
-    background: color-mix(in srgb, var(--primary) 8%, transparent);
+    background: transparent;
     color: var(--muted-foreground);
-    border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
-    transition: background-color 150ms ease, color 150ms ease;
+    border: 1px solid var(--hairline-strong);
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
   }
   .btn-ghost-steam:hover {
-    background: color-mix(in srgb, var(--primary) 16%, transparent);
-    color: var(--foreground);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    transform: translateY(-2px);
   }
 
   .bg-nav { background-color: var(--nav-bg); }
