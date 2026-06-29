@@ -33,15 +33,15 @@ export function FeaturedSpotlight() {
           <div className="group relative aspect-[16/9] overflow-hidden border-b border-white/5 lg:border-b-0 lg:border-r">
             <div className="cover-img absolute inset-0 bg-gradient-to-br from-[#32353D] via-[#2B2E35] to-[#1B1B1F]" />
             <div className="absolute inset-0 grid-bg opacity-40" />
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center px-4">
               <div className="text-center">
-                <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-primary/20 backdrop-blur transition group-hover:scale-110">
-                  <Play className="h-8 w-8 text-primary" />
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary/20 backdrop-blur transition group-hover:scale-110 sm:h-20 sm:w-20">
+                  <Play className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
                 </div>
-                <div className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground/80 sm:text-4xl">
+                <div className="mt-3 font-display text-xl font-extrabold tracking-tight text-foreground/80 sm:mt-4 sm:text-3xl lg:text-4xl">
                   {project.title}
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
                   {project.metrics.engine} · {project.metrics.platform}
                 </div>
               </div>
