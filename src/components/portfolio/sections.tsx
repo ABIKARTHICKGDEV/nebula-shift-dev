@@ -24,10 +24,13 @@ export function RecentlyDeveloped() {
   const scroll = (dir: 1 | -1) => {
     ref.current?.scrollBy({ left: dir * 360, behavior: "smooth" });
   };
+  const released = portfolio.projects.filter(
+    (p) => p.metrics.status === "Completed",
+  );
   return (
     <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
       <div className="mb-5 flex items-end justify-between">
-        <SectionHead eyebrow="Recently Developed" title="New Releases" />
+        <SectionHead eyebrow="Released Games" title="Released Games" />
         <div className="hidden gap-1.5 sm:flex">
           <button
             aria-label="Scroll left"
@@ -50,7 +53,7 @@ export function RecentlyDeveloped() {
         ref={ref}
         className="scroll-row -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6"
       >
-        {portfolio.projects.map((p) => (
+        {released.map((p) => (
           <a
             key={p.id}
             href="#library"
@@ -58,9 +61,20 @@ export function RecentlyDeveloped() {
           >
             <div className="cover-img absolute inset-0 bg-gradient-to-br from-[#2A475E] via-[#1B2838] to-[#0E141B]" />
             <div className="absolute inset-0 grid-bg opacity-30" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Icons.Gamepad2 className="h-10 w-10 text-foreground/20" />
-            </div>
+            {p.media?.banner ? (
+              <img
+                src={asset(p.media.banner)}
+                alt={p.title}
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Icons.Gamepad2 className="h-10 w-10 text-foreground/20" />
+              </div>
+            )}
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3">
               <div className="font-display text-base font-bold leading-tight text-foreground">
                 {p.title}
