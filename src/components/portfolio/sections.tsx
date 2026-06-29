@@ -133,7 +133,12 @@ export function About() {
       id="about"
       className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
     >
+      <div
+        className="section-bg"
+        style={{ ['--section-bg-image' as never]: `url(${asset('bg/about.jpg')})` }}
+      />
       <SectionHead eyebrow="Developer Profile" title="About The Developer" />
+
       <div className="mt-6 grid gap-5 lg:grid-cols-[300px_1fr]">
         {/* Profile card */}
         <div className="rounded-sm border border-white/8 bg-[#2B2E35] p-5">
