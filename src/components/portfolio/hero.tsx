@@ -33,7 +33,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#171A21] to-transparent" />
       </div>
 
-      <div className="mx-auto flex min-h-[88vh] max-w-7xl flex-col justify-end px-4 pb-12 pt-32 sm:px-6 lg:min-h-[92vh] lg:pb-20">
+      <div className="mx-auto grid min-h-[88vh] max-w-7xl items-end gap-8 px-4 pb-12 pt-32 sm:px-6 lg:min-h-[92vh] lg:grid-cols-[1.4fr_1fr] lg:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -92,6 +92,15 @@ export function Hero() {
               <Github className="h-4 w-4" /> GitHub
             </a>
           </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="w-full"
+        >
+          <RecentlyDeveloped />
         </motion.div>
       </div>
     </section>
