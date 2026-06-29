@@ -9,7 +9,6 @@ import { z } from "zod";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
 import { portfolio } from "@/data/portfolio";
-import type { ViewerRole } from "@/data/portfolio";
 import { SectionHead } from "./projects";
 import { getGithubStats } from "@/lib/github";
 import { emailConfig, isEmailConfigured } from "@/config/email";
@@ -79,24 +78,12 @@ export function RecentlyDeveloped() {
 
 // ─── Development Toolkit (was: Skills) ──────────────────────────────────────
 
-export function Skills({ role }: { role: ViewerRole }) {
-  const ordered = [...portfolio.skillGroups].sort(
-    (a, b) =>
-      (role.skillsPriority.indexOf(a.id) === -1
-        ? 99
-        : role.skillsPriority.indexOf(a.id)) -
-      (role.skillsPriority.indexOf(b.id) === -1
-        ? 99
-        : role.skillsPriority.indexOf(b.id)),
-  );
+export function Skills() {
   return (
     <section id="toolkit" className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
-      <SectionHead
-        eyebrow="Development Toolkit"
-        title="Tools & Technologies"
-      />
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {ordered.map((g) => {
+      <SectionHead eyebrow="Skills" title="Technical Skills" />
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {portfolio.skillGroups.map((g) => {
           const Icon = lucide[g.icon] ?? Icons.Sparkles;
           return (
             <div
