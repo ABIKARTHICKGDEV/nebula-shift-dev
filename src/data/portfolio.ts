@@ -487,16 +487,6 @@ export const portfolio: PortfolioConfig = {
       },
     ],
   },
-  // ── Background images (placeholders — drop files into public/bg/) ──────────
-  backgrounds: {
-    hero: "/bg/hero.jpg",
-    projects: "/bg/projects.jpg",
-    mechanics: "/bg/mechanics.jpg",
-    skills: "/bg/skills.jpg",
-    about: "/bg/about.jpg",
-    activity: "/bg/activity.jpg",
-    contact: "/bg/contact.jpg",
-  },
   // ── Gameplay mechanics carousel (data-driven; add more by appending) ───────
   gameplayMechanics: [
     // TODO: add media (preview/gif/video) and links (github/demo) as systems ship.
