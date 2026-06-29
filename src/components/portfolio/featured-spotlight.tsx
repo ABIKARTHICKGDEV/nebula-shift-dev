@@ -54,11 +54,11 @@ export function FeaturedSpotlight() {
           </div>
 
           {/* Info */}
-          <div className="flex flex-col p-5 sm:p-6">
+          <div className="flex flex-col p-4 sm:p-6">
             <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
               {project.category}
             </div>
-            <h3 className="mt-1 font-display text-2xl font-bold sm:text-3xl">
+            <h3 className="mt-1 font-display text-xl font-bold sm:text-2xl lg:text-3xl">
               {project.title}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
