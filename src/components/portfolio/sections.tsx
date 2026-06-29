@@ -33,7 +33,7 @@ export function RecentlyDeveloped() {
           {released.length} titles
         </span>
       </div>
-      <div className="scroll-row max-h-[460px] overflow-y-auto px-2 py-2">
+      <div className="scroll-row max-h-[320px] overflow-y-auto px-2 py-2 sm:max-h-[460px]">
         <ul className="flex flex-col gap-1.5">
           {released.map((p) => (
             <li key={p.id}>
