@@ -11,7 +11,7 @@ export function Hero() {
     portfolio.projects[0]!;
 
   return (
-    <section id="top" className="relative isolate w-full overflow-hidden">
+    <section id="top" className="relative isolate w-full overflow-hidden scroll-mt-20">
       {/* Background */}
       <div
         className="section-bg"
@@ -20,22 +20,22 @@ export function Hero() {
       <div className="absolute inset-0 -z-[9] grid-bg opacity-20" />
 
 
-      <div className="mx-auto grid min-h-[88vh] max-w-7xl items-end gap-8 px-4 pb-12 pt-32 sm:px-6 lg:min-h-[92vh] lg:grid-cols-[1.4fr_1fr] lg:pb-20">
+      <div className="mx-auto grid min-h-[80vh] max-w-7xl items-end gap-8 px-4 pb-10 pt-24 sm:px-6 sm:pt-28 lg:min-h-[92vh] lg:grid-cols-[1.4fr_1fr] lg:pb-20 lg:pt-32">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-flex items-center gap-2 rounded-sm border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+          <div className="inline-flex items-center gap-2 rounded-sm border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary sm:text-[11px]">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
             Available Now
           </div>
 
-          <h1 className="mt-4 font-display text-5xl font-extrabold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             Gameplay Programmer
           </h1>
 
-          <p className="mt-3 max-w-2xl font-display text-base font-semibold uppercase tracking-[0.14em] text-primary sm:text-lg">
+          <p className="mt-3 max-w-2xl font-display text-sm font-semibold uppercase tracking-[0.14em] text-primary sm:text-lg">
             Building polished gameplay systems and interactive experiences using Unity and Unreal Engine.
           </p>
 

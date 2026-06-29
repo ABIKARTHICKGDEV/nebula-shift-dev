@@ -33,7 +33,7 @@ export function RecentlyDeveloped() {
           {released.length} titles
         </span>
       </div>
-      <div className="scroll-row max-h-[460px] overflow-y-auto px-2 py-2">
+      <div className="scroll-row max-h-[320px] overflow-y-auto px-2 py-2 sm:max-h-[460px]">
         <ul className="flex flex-col gap-1.5">
           {released.map((p) => (
             <li key={p.id}>
@@ -83,7 +83,7 @@ export function Skills() {
   return (
     <section
       id="toolkit"
-      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+      className="relative isolate mx-auto mt-20 max-w-7xl scroll-mt-20 overflow-hidden px-4 sm:px-6"
     >
       <div
         className="section-bg"
@@ -131,7 +131,7 @@ export function About() {
   return (
     <section
       id="about"
-      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+      className="relative isolate mx-auto mt-20 max-w-7xl scroll-mt-20 overflow-hidden px-4 sm:px-6"
     >
       <div
         className="section-bg"
@@ -369,7 +369,7 @@ export function GithubBlock() {
   return (
     <section
       id="activity"
-      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+      className="relative isolate mx-auto mt-20 max-w-7xl scroll-mt-20 overflow-hidden px-4 sm:px-6"
     >
       <div
         className="section-bg"
@@ -585,7 +585,7 @@ export function Contact() {
   return (
     <section
       id="support"
-      className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
+      className="relative isolate mx-auto mt-20 max-w-7xl scroll-mt-20 overflow-hidden px-4 sm:px-6"
     >
       <div
         className="section-bg"
