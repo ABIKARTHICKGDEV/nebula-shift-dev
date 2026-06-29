@@ -65,15 +65,6 @@ export interface GameplayMechanic {
   sourceUrl?: string;
 }
 
-export interface BackgroundImages {
-  hero: string;
-  projects: string;
-  mechanics: string;
-  skills: string;
-  about: string;
-  activity: string;
-  contact: string;
-}
 
 export interface SkillGroup {
   id: string;
