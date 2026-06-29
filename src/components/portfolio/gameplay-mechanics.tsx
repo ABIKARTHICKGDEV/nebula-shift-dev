@@ -67,7 +67,7 @@ function MechanicCard({ mechanic: m }: { mechanic: GameplayMechanic }) {
     m.difficulty || m.engineVersion || m.category || m.docsUrl || m.articleUrl || m.sourceUrl;
 
   return (
-    <article className="card-lift cover-zoom group relative flex h-[320px] w-[320px] shrink-0 snap-start flex-col overflow-hidden rounded-sm border border-white/8 bg-[#2B2E35]">
+    <article className="card-lift cover-zoom group relative flex h-[320px] w-[280px] shrink-0 snap-start flex-col overflow-hidden rounded-sm border border-white/8 bg-[#2B2E35] sm:w-[320px]">
       {/* Cover */}
       <div className="relative h-[160px] overflow-hidden border-b border-white/5">
         <div className="cover-img absolute inset-0 bg-gradient-to-br from-[#32353D] via-[#2B2E35] to-[#1B1B1F]" />
