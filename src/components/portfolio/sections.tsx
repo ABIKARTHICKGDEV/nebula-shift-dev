@@ -85,7 +85,12 @@ export function Skills() {
       id="toolkit"
       className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
     >
+      <div
+        className="section-bg"
+        style={{ ['--section-bg-image' as never]: `url(${asset('bg/skills.jpg')})` }}
+      />
       <SectionHead eyebrow="Skills" title="Technical Skills" />
+
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {portfolio.skillGroups.map((g) => {
           const Icon = lucide[g.icon] ?? Icons.Sparkles;
