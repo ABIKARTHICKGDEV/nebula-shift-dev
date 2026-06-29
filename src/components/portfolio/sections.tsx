@@ -587,11 +587,16 @@ export function Contact() {
       id="support"
       className="relative isolate mx-auto mt-20 max-w-7xl overflow-hidden px-4 sm:px-6"
     >
+      <div
+        className="section-bg"
+        style={{ ['--section-bg-image' as never]: `url(${asset('bg/contact.jpg')})` }}
+      />
       <SectionHead
         eyebrow="Get In Touch"
         title="Let's Build Something Together"
         sub="Open a conversation about roles, collaborations, or game projects."
       />
+
       <div className="mt-6 grid gap-5 lg:grid-cols-[1.2fr_1fr]">
         <form
           onSubmit={handleSubmit(onSubmit)}
