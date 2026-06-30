@@ -232,7 +232,7 @@ export const portfolio: PortfolioConfig = {
           solution: "Object pooling system with pre-warmed obstacle pools.",
         },
         {
-          challenge: "Keeping difficulty fair as speed scales.",
+          challenge: "Keeping difficulty fair as speed scales..",
           solution: "Score-driven spawner weights & cooldown windows.",
         },
       ],
