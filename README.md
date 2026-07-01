@@ -4,7 +4,7 @@ A static, single-page React portfolio for Unity / Unreal / Gameplay programmer
 recruitment. Built with **React 19 + Vite + TypeScript + Tailwind v4 + Framer
 Motion**, deployed to **GitHub Pages** via GitHub Actions. No server runtime.
 
-Live: <https://abikarthick-412.github.io/nebula-shift-dev/>
+Live: <https://abikarthickgdev.github.io/nebula-shift-dev/>
 
 ---
 
